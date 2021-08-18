@@ -3,6 +3,12 @@
 ## Brief
 Terraform module that deploys Lambda functions to trigger exports of RDS snapshots to S3.
 
+## Design
+
+<div align="left">
+  <img src="https://raw.githubusercontent.com/binbashar/terraform-aws-rds-export-to-s3/master/assets/rds-export-to-s3.png" alt="leverage" width="400"/>
+</div>
+
 ## Requirements
 
 No requirements.
