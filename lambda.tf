@@ -48,5 +48,8 @@ module "monitor_export_task_lambda" {
     LOG_LEVEL: var.log_level,
   }
 
+  attach_policy = true
+  policy        = aws_iam_policy.rdsMonitorExportTaskLambda.arn
+
   tags = var.tags
 }

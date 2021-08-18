@@ -50,7 +50,7 @@ POLICY
 }
 
 #
-# Lambda Permissions: RdsStartExportTask
+# Lambda Permissions: Start Export Task
 #
 resource "aws_iam_policy" "rdsStartExportTaskLambda" {
   name   = "${var.prefix}-rds-snapshot-exporter-lambda"
@@ -67,7 +67,21 @@ resource "aws_iam_policy" "rdsStartExportTaskLambda" {
             "Action": "iam:PassRole",
             "Resource": ["${aws_iam_role.rdsSnapshotExportTask.arn}"],
             "Effect": "Allow"
-        },
+        }
+    ]
+}
+POLICY
+}
+
+#
+# Lambda Permissions: Export Task Monitor
+#
+resource "aws_iam_policy" "rdsMonitorExportTaskLambda" {
+  name   = "${var.prefix}-rds-snapshot-exporter-monitor-lambda"
+  policy = <<POLICY
+{
+    "Version": "2012-10-17",
+    "Statement": [
         {
             "Action": "sns:Publish",
             "Resource": ["${var.notifications_topic_arn}"],

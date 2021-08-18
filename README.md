@@ -1,9 +1,14 @@
 # Terraform Module: RDS Snapshots Export To S3
 
 ## Brief
-Terraform module that deploys Lambda functions to trigger exports of RDS snapshots to S3.
+Terraform module that deploys Lambda functions that take care of triggering and monitoring exports of RDS snapshots to S3.
 
 ## Design
+A Lambda function takes care of triggering the RDS Start Export Task for the given database name. The snapshots will be exported to the given S3 bucket.
+
+Another Lambga function is only interested in RDS Export Task events that match a given database name. Whenever a match is detected, a message will be published in the given SNS topic which you can use to trigger other components. E.g. a Lambda function that sends notifications to Slack.
+
+A single CloudWatch Event Rule takes care of listening for RDS Snapshots Events in order to call the aforementioned Lambda functions.
 
 <div align="left">
   <img src="https://raw.githubusercontent.com/binbashar/terraform-aws-rds-export-to-s3/master/assets/rds-export-to-s3.png" alt="leverage" width="400"/>
