@@ -14,6 +14,11 @@ A single CloudWatch Event Rule takes care of listening for RDS Snapshots Events 
   <img src="https://raw.githubusercontent.com/binbashar/terraform-aws-rds-export-to-s3/master/assets/rds-export-to-s3.png" alt="leverage" width="400"/>
 </div>
 
+## Important considerations
+* The module requires you to provide the S3 bucket that will be used for storing the exported snapshots. The good thing about this is that you are able to configure the bucket in any way you need. E.g. replication, lifecycle, locking, and so on.
+* The module creates a KMS Key (CMK) which is used for encrypting the exported snapshots on S3. The reason for the module not yet supporting passing your own CMK is that the key needs to grant a number of permissions to a role that is also created by this module. If providing your own key was supported, an specific execution order would be required: create the module by passing the key, get the Lambda role from the module's output and update the key permissions to grant it specific actions. So the orchestration becomes complicated.
+* Since the module creates its own KMS CMK, keep that in mind regarding KMS pricing; not only regarding the pricing of a single key but also things like key rotations/versions and KMS API requests.
+
 ## Requirements
 
 No requirements.
