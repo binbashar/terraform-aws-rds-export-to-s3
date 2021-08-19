@@ -9,7 +9,7 @@ resource "aws_kms_key" "snapshotExportEncryptionKey" {
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Sid": "Allow administration of the key to the root user",
+            "Sid": "Allow administration of the key to the account",
             "Effect": "Allow",
             "Principal": {
                 "AWS": "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
