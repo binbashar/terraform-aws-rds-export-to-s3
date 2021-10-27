@@ -2,7 +2,15 @@
 # Create an SNS Topic for receiving RDS Snapshot Events
 #
 resource "aws_sns_topic" "rdsSnapshotsEvents" {
-  name = "${var.prefix}-rds-snapshots-creation"
+  name = "${local.prefix}rds-snapshots-creation"
+  tags = merge({ Name = "${local.prefix}rds-snapshots-creation" }, var.tags)
+}
+
+
+resource "aws_sns_topic" "exportMonitorNotifications" {
+  count = var.create_notifications_topic ? 1 : 0
+  name  = "${local.prefix}rds-exports-monitor-notifications"
+  tags  = merge({ Name = "${local.prefix}rds-exports-monitor-notifications" }, var.tags)
 }
 
 #
@@ -31,15 +39,15 @@ POLICY
 # Subscribe Lambdas to the Topics
 #
 resource "aws_sns_topic_subscription" "lambdaRdsSnapshotToS3Exporter" {
-  topic_arn     = aws_sns_topic.rdsSnapshotsEvents.arn
-  protocol      = "lambda"
-  endpoint      = module.start_export_task_lambda.lambda_function_arn
+  topic_arn = aws_sns_topic.rdsSnapshotsEvents.arn
+  protocol  = "lambda"
+  endpoint  = module.start_export_task_lambda.lambda_function_arn
 }
 
 resource "aws_sns_topic_subscription" "lambdaRdsSnapshotToS3Monitor" {
-  topic_arn     = aws_sns_topic.rdsSnapshotsEvents.arn
-  protocol      = "lambda"
-  endpoint      = module.monitor_export_task_lambda.lambda_function_arn
+  topic_arn = aws_sns_topic.rdsSnapshotsEvents.arn
+  protocol  = "lambda"
+  endpoint  = module.monitor_export_task_lambda.lambda_function_arn
 }
 
 #
