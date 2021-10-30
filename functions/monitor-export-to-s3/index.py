@@ -29,6 +29,7 @@ def handler(event, context):
     sourceType = message["detail"]["SourceType"]
     sourceId = message["detail"]["SourceIdentifier"]
     sourceArn = message["detail"]["SourceArn"]
+    dbName = os.environ['DB_NAME'].replace(' ', '').split(',')
 
     # Ref: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Events.Messages.html#USER_Events.Messages.snapshot
     # Ref: https://docs.amazonaws.cn/en_us/AmazonRDS/latest/AuroraUserGuide/USER_Events.Messages.html#USER_Events.Messages.cluster-snapshot
@@ -42,25 +43,29 @@ def handler(event, context):
         "RDS-EVENT-0163": "DB cluster snapshot export task canceled",
         "RDS-EVENT-0164": "DB cluster snapshot export task completed"
     }
-    matchSnapshotRegEx = "^rds:" + os.environ["DB_NAME"] + "-\d{4}-\d{2}-\d{2}-\d{2}-\d{2}$"
 
-    if eventId in supportedEvents.keys() and re.match(matchSnapshotRegEx, sourceId):
-        messageTitle = supportedEvents[eventId]
-        messageBody = {
-            "SourceType": sourceType,
-            "SourceIdentifier": sourceId,
-            "SourceArn": sourceArn
-        }
-        response = boto3.client('sns').publish(
-            TargetArn=os.environ["SNS_NOTIFICATIONS_TOPIC_ARN"],
-            Subject=messageTitle,
-            Message=json.dumps({'default': json.dumps(messageBody)}),
-            MessageStructure='json'
-        )
+    if eventId in supportedEvents.keys():
+        for db in dbName:
+            matchSnapshotRegEx = "^rds:" + db + "-\d{4}-\d{2}-\d{2}-\d{2}-\d{2}$"
+            if re.match(matchSnapshotRegEx, sourceId):
+                messageTitle = supportedEvents[eventId]
+                messageBody = {
+                    "SourceType": sourceType,
+                    "SourceIdentifier": sourceId,
+                    "SourceArn": sourceArn
+                }
+                response = boto3.client('sns').publish(
+                    TargetArn=os.environ["SNS_NOTIFICATIONS_TOPIC_ARN"],
+                    Subject=messageTitle,
+                    Message=json.dumps({'default': json.dumps(messageBody)}),
+                    MessageStructure='json'
+                )
+            else:
+                logger.info(f"Ignoring event notification for {sourceId} - {eventId}")
+                logger.info(f"notifications for {dbName} only")
 
     else:
-        logger.info(f"Ignoring event notification for {sourceId}")
-        logger.info(
-            f"Function is configured to accept {supportedEvents} "
-            f"notifications for {os.environ['DB_NAME']} only"
-        )
+        logger.info(f"Ignoring event notification for {sourceId} - {eventId}")
+        logger.info(f"Function is configured to accept {supportedEvents} only")
+
+

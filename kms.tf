@@ -2,9 +2,10 @@
 # This key will be used for encrypting snapshots exported to S3
 #
 resource "aws_kms_key" "snapshotExportEncryptionKey" {
+  count       = var.create_customer_kms_key ? 1 : 0
   description = "Snapshot Export Encryption Key"
-
-  policy = <<POLICY
+  tags        = merge({ Name = "Snapshot Export Encryption Key" }, var.tags)
+  policy      = <<POLICY
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -57,6 +58,7 @@ POLICY
 # Key alias
 #
 resource "aws_kms_alias" "snapshotExportEncryptionKey" {
-  name          = "alias/${var.prefix}-rds-export-to-s3"
-  target_key_id = aws_kms_key.snapshotExportEncryptionKey.key_id
+  count         = var.create_customer_kms_key ? 1 : 0
+  name          = "alias/${local.prefix}rds-export-to-s3"
+  target_key_id = aws_kms_key.snapshotExportEncryptionKey[0].key_id
 }

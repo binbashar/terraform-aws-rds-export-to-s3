@@ -20,10 +20,15 @@ output "monitor_export_task_lambda_role_arn" {
 
 output "snapshots_export_encryption_key_arn" {
   description = "Snapshots Export Encryption Key ARN"
-  value       = aws_kms_key.snapshotExportEncryptionKey.arn
+  value       = var.create_customer_kms_key ? aws_kms_key.snapshotExportEncryptionKey[0].arn : var.customer_kms_key_arn
 }
 
 output "snapshots_events_sns_topics_arn" {
   description = "RDS Snapshots Events SNS Topics ARN"
   value       = aws_sns_topic.rdsSnapshotsEvents.arn
+}
+
+output "snapshots_events_export_monitor_sns_topics_arn" {
+  description = "RDS Snapshots Export Monitor Events SNS Topics ARN"
+  value       = var.create_notifications_topic ? aws_sns_topic.exportMonitorNotifications[0].arn : var.notifications_topic_arn
 }

@@ -29,25 +29,31 @@ def handler(event, context):
     eventId = message["detail"]["EventID"]
     sourceId = message["detail"]["SourceIdentifier"]
     sourceArn = message["detail"]["SourceArn"]
-    matchSnapshotRegEx = "^rds:" + os.environ["DB_NAME"] + "-\d{4}-\d{2}-\d{2}-\d{2}-\d{2}$"
+    rdsEventID = os.environ["RDS_EVENT_ID"].replace(' ', '').split(',')
+    dbName = os.environ['DB_NAME'].replace(' ', '').split(',')
 
-    if eventId.endswith(os.environ["RDS_EVENT_ID"]) and re.match(matchSnapshotRegEx, sourceId):
-        exportTaskId = ((sourceId[4:] + '-').replace("--", "-") + messageId)[:60]
-        response = boto3.client("rds").start_export_task(
-            ExportTaskIdentifier=exportTaskId,
-            SourceArn=sourceArn,
-            S3BucketName=os.environ["SNAPSHOT_BUCKET_NAME"],
-            IamRoleArn=os.environ["SNAPSHOT_TASK_ROLE"],
-            KmsKeyId=os.environ["SNAPSHOT_TASK_KEY"],
-        )
-        response["SnapshotTime"] = str(response["SnapshotTime"])
+    if eventId in rdsEventID:
+        for db in dbName:
+            matchSnapshotRegEx = "^rds:" + db + "-\d{4}-\d{2}-\d{2}-\d{2}-\d{2}$"
+            if re.match(matchSnapshotRegEx, sourceId):
+                exportTaskId = ((sourceId[4:] + '-').replace("--", "-") + messageId)[:60]
+                response = boto3.client("rds").start_export_task(
+                    ExportTaskIdentifier=exportTaskId,
+                    SourceArn=sourceArn,
+                    S3BucketName=os.environ["SNAPSHOT_BUCKET_NAME"],
+                    S3Prefix=os.environ["SNAPSHOT_BUCKET_PREFIX"],
+                    IamRoleArn=os.environ["SNAPSHOT_TASK_ROLE"],
+                    KmsKeyId=os.environ["SNAPSHOT_TASK_KEY"],
+                )
+                response["SnapshotTime"] = str(response["SnapshotTime"])
 
-        logger.info("Snapshot export task started")
-        logger.info(json.dumps(response))
+                logger.info(f"Snapshot export task started on {db}")
+                logger.info(json.dumps(response))
+            else:
+                logger.info(f"Ignoring event notification for {sourceId} - {eventId}")
+                logger.info(f"notifications for {dbName} only")
 
     else:
-        logger.info(f"Ignoring event notification for {sourceId}")
-        logger.info(
-            f"Function is configured to accept {os.environ['RDS_EVENT_ID']} "
-            f"notifications for {os.environ['DB_NAME']} only"
-        )
+        logger.info(f"Ignoring event notification for {sourceId} - {eventId}")
+        logger.info(f"Function is configured to accept {rdsEventID} only")
+
