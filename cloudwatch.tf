@@ -2,7 +2,7 @@
 # Create an event rule to listen for RDS DB Cluster Snapshot Events
 #
 resource "aws_cloudwatch_event_rule" "rdsSnapshotCreation" {
-  name        = "${local.prefix}rds-snapshot-creation"
+  name        = "${local.prefix}rds-snapshot-creation${local.postfix}"
   description = "RDS Snapshot Creation"
 
   event_pattern = <<PATTERN
@@ -16,7 +16,7 @@ resource "aws_cloudwatch_event_rule" "rdsSnapshotCreation" {
 }
 PATTERN
 
-  tags = merge({ Name = "${local.prefix}rds-snapshot-creation" }, var.tags)
+  tags = merge({ Name = "${local.prefix}rds-snapshot-creation${local.postfix}" }, var.tags)
 }
 
 #

@@ -2,10 +2,17 @@
 locals {
   snapshots_bucket_arn = "arn:aws:s3:::${var.snapshots_bucket_name}"
   prefix               = var.prefix != null ? "${var.prefix}-" : ""
+  postfix              = var.postfix != null ? "-${var.postfix}" : "-${data.aws_region.current.name}"
 }
 
 variable "prefix" {
-  description = "Prefix that will be used for naming resources."
+  description = "Prefix that will be used for naming resources. '<prefix>resouce-name'."
+  type        = string
+  default     = null
+}
+
+variable "postfix" {
+  description = "Postfix that will be used for naming resources. 'resouce-name-<postfix>'."
   type        = string
   default     = null
 }
