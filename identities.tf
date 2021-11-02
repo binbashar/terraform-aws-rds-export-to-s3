@@ -2,8 +2,8 @@
 # This role is used by RDS Start Export Task
 #
 resource "aws_iam_role" "rdsSnapshotExportTask" {
-  name               = "${local.prefix}snapshot-export-task"
-  tags               = merge({ Name = "${local.prefix}snapshot-export-task" }, var.tags)
+  name               = "${local.prefix}snapshot-export-task${local.postfix}"
+  tags               = merge({ Name = "${local.prefix}snapshot-export-task${local.postfix}" }, var.tags)
   assume_role_policy = <<POLICY
 {
     "Version": "2012-10-17",
@@ -24,7 +24,7 @@ POLICY
 # Allow RDS Start Export Task to write the snapshot on the S3 bucket
 #
 resource "aws_iam_role_policy" "rdsSnapshotExportToS3" {
-  name   = "${local.prefix}rds-snapshot-export-to-s3"
+  name   = "${local.prefix}rds-snapshot-export-to-s3${local.postfix}"
   role   = aws_iam_role.rdsSnapshotExportTask.id
   policy = <<POLICY
 {
@@ -54,8 +54,8 @@ POLICY
 # Lambda Permissions: Start Export Task
 #
 resource "aws_iam_policy" "rdsStartExportTaskLambda" {
-  name   = "${local.prefix}rds-snapshot-exporter-lambda"
-  tags   = merge({ Name = "${local.prefix}rds-snapshot-exporter-lambda" }, var.tags)
+  name   = "${local.prefix}rds-snapshot-exporter-lambda${local.postfix}"
+  tags   = merge({ Name = "${local.prefix}rds-snapshot-exporter-lambda${local.postfix}" }, var.tags)
   policy = <<POLICY
 {
     "Version": "2012-10-17",
@@ -104,8 +104,8 @@ POLICY
 # Lambda Permissions: Export Task Monitor
 #
 resource "aws_iam_policy" "rdsMonitorExportTaskLambda" {
-  name   = "${local.prefix}rds-snapshot-exporter-monitor-lambda"
-  tags   = merge({ Name = "${local.prefix}rds-snapshot-exporter-monitor-lambda" }, var.tags)
+  name   = "${local.prefix}rds-snapshot-exporter-monitor-lambda${local.postfix}"
+  tags   = merge({ Name = "${local.prefix}rds-snapshot-exporter-monitor-lambda${local.postfix}" }, var.tags)
   policy = <<POLICY
 {
     "Version": "2012-10-17",

@@ -3,9 +3,9 @@
 # database name and the event id for which this is configured.
 #
 module "start_export_task_lambda" {
-  source = "github.com/terraform-aws-modules/terraform-aws-lambda?ref=v2.7.0"
+  source = "github.com/terraform-aws-modules/terraform-aws-lambda?ref=v2.23.0"
 
-  function_name = "${local.prefix}rds-export-to-s3"
+  function_name = "${local.prefix}rds-export-to-s3${local.postfix}"
   description   = "RDS Export To S3"
   handler       = "index.handler"
   runtime       = "python3.8"
@@ -28,16 +28,16 @@ module "start_export_task_lambda" {
   attach_policy = true
   policy        = aws_iam_policy.rdsStartExportTaskLambda.arn
 
-  tags = merge({ Name = "${local.prefix}rds-export-to-s3" }, var.tags)
+  tags = merge({ Name = "${local.prefix}rds-export-to-s3${local.postfix}" }, var.tags)
 }
 
 #
 # This function will react to rds snapshot export task events.
 #
 module "monitor_export_task_lambda" {
-  source = "github.com/terraform-aws-modules/terraform-aws-lambda?ref=v2.7.0"
+  source = "github.com/terraform-aws-modules/terraform-aws-lambda?ref=v2.23.0"
 
-  function_name = "${local.prefix}rds-export-to-s3-monitor"
+  function_name = "${local.prefix}rds-export-to-s3-monitor${local.postfix}"
   description   = "RDS Export To S3 Monitor"
   handler       = "index.handler"
   runtime       = "python3.8"
@@ -56,5 +56,5 @@ module "monitor_export_task_lambda" {
   attach_policy = true
   policy        = aws_iam_policy.rdsMonitorExportTaskLambda.arn
 
-  tags = merge({ Name = "${local.prefix}rds-export-to-s3-monitor" }, var.tags)
+  tags = merge({ Name = "${local.prefix}rds-export-to-s3-monitor${local.postfix}" }, var.tags)
 }

@@ -2,15 +2,15 @@
 # Create an SNS Topic for receiving RDS Snapshot Events
 #
 resource "aws_sns_topic" "rdsSnapshotsEvents" {
-  name = "${local.prefix}rds-snapshots-creation"
-  tags = merge({ Name = "${local.prefix}rds-snapshots-creation" }, var.tags)
+  name = "${local.prefix}rds-snapshots-creation${local.postfix}"
+  tags = merge({ Name = "${local.prefix}rds-snapshots-creation${local.postfix}" }, var.tags)
 }
 
 
 resource "aws_sns_topic" "exportMonitorNotifications" {
   count = var.create_notifications_topic ? 1 : 0
-  name  = "${local.prefix}rds-exports-monitor-notifications"
-  tags  = merge({ Name = "${local.prefix}rds-exports-monitor-notifications" }, var.tags)
+  name  = "${local.prefix}rds-exports-monitor-notifications${local.postfix}"
+  tags  = merge({ Name = "${local.prefix}rds-exports-monitor-notifications${local.postfix}" }, var.tags)
 }
 
 #

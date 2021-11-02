@@ -4,7 +4,7 @@
 resource "aws_kms_key" "snapshotExportEncryptionKey" {
   count       = var.create_customer_kms_key ? 1 : 0
   description = "Snapshot Export Encryption Key"
-  tags        = merge({ Name = "Snapshot Export Encryption Key" }, var.tags)
+  tags        = merge({ Name = "${local.prefix}kms-rds-snapshot-key${local.postfix}" }, var.tags)
   policy      = <<POLICY
 {
     "Version": "2012-10-17",
@@ -59,6 +59,6 @@ POLICY
 #
 resource "aws_kms_alias" "snapshotExportEncryptionKey" {
   count         = var.create_customer_kms_key ? 1 : 0
-  name          = "alias/${local.prefix}rds-export-to-s3"
+  name          = "alias/${local.prefix}rds-snapshot-export${local.postfix}"
   target_key_id = aws_kms_key.snapshotExportEncryptionKey[0].key_id
 }
