@@ -33,12 +33,14 @@ def handler(event, context):
     dbName = os.environ['DB_NAME'].replace(' ', '').split(',')
 
     if eventId in rdsEventID:
+        try:
+          snapshotDbName=boto3.client("rds").describe_db_snapshots(DBSnapshotIdentifier=sourceId)['DBSnapshots'][0]['DBInstanceIdentifier']
+        except: 
+          snapshotDbName=boto3.client("rds").describe_db_cluster_snapshots(DBClusterSnapshotIdentifier=sourceId)['DBClusterSnapshots'][0]['DBClusterIdentifier']
+
         for db in dbName:
-            matchSnapshotRegEx = "^rds:" + db + "-\d{4}-\d{2}-\d{2}-\d{2}-\d{2}$"
-            if re.match(matchSnapshotRegEx, sourceId):
-                exportTaskId = ((sourceId[4:] + '-').replace("--", "-") + messageId)[:60]
-                if exportTaskId[59] == "-":
-                    exportTaskId = exportTaskId[:59]
+            if db == snapshotDbName:
+                exportTaskId = (sourceId.replace("rds:","") + messageId)[:60]
                 response = boto3.client("rds").start_export_task(
                     ExportTaskIdentifier=exportTaskId,
                     SourceArn=sourceArn,
