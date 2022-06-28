@@ -11,6 +11,7 @@ resource "aws_cloudwatch_event_rule" "rdsSnapshotCreation" {
     "aws.rds"
   ],
   "detail-type": [
+    "RDS DB Snapshot Event",
     "RDS DB Cluster Snapshot Event"
   ]
 }
