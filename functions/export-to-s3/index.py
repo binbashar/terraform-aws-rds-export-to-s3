@@ -37,8 +37,8 @@ def handler(event, context):
             matchSnapshotRegEx = "^rds:" + db + "-\d{4}-\d{2}-\d{2}-\d{2}-\d{2}$"
             if re.match(matchSnapshotRegEx, sourceId):
                 exportTaskId = ((sourceId[4:] + '-').replace("--", "-") + messageId)[:60]
-                if exportTaskId[59] == "-":
-                    exportTaskId = exportTaskId[:59]
+                if exportTaskId[-1] == "-":
+                    exportTaskId = exportTaskId[:-1]
                 response = boto3.client("rds").start_export_task(
                     ExportTaskIdentifier=exportTaskId,
                     SourceArn=sourceArn,
