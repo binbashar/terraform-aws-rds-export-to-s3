@@ -39,9 +39,9 @@ variable "rds_event_ids" {
   description = <<DOC
 RDS (CloudWatch) Event ID that will trigger the calling of RDS Start Export Task API:
 - Automated snapshots of Aurora RDS: RDS-EVENT-0169
-- Manual snapshots of Aurora/non-Aurora RDS: RDS-EVENT-0075
+- Manual snapshots of Aurora RDS: RDS-EVENT-0075
 - Automated snapshots of non-Aurora RDS: RDS-EVENT-0091
-- Manual snapshots of Aurora/non-Aurora RDS: RDS-EVENT-0042
+- Manual snapshots of non-Aurora RDS: RDS-EVENT-0042
 Automated and/or manual backups of either RDS Aurora and RDS non-Aurora are supported.
 Ref: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Events.Messages.html#USER_Events.Messages.snapshot
 Ref: https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_Events.Messages.html#USER_Events.Messages.cluster-snapshot
