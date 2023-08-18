@@ -34,7 +34,7 @@ def handler(event, context):
 
     if eventId in rdsEventID:
         for db in dbName:
-            matchSnapshotRegEx = "^rds:" + db + "-\d{4}-\d{2}-\d{2}-\d{2}-\d{2}$"
+            matchSnapshotRegEx = "^rds(:|-)" + db + "-\d{4}-\d{2}-\d{2}-\d{2}-\d{2}$"
             if re.match(matchSnapshotRegEx, sourceId):
                 exportTaskId = ((sourceId[4:] + '-').replace("--", "-") + messageId)[:60]
                 if exportTaskId[-1] == "-":
