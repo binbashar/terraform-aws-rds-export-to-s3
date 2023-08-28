@@ -26,7 +26,7 @@ A single CloudWatch Event Rule takes care of listening for RDS Snapshots Events 
 * The module requires you to provide the S3 bucket that will be used for storing the exported snapshots. The good thing about this is that you are able to configure the bucket in any way you need. E.g. replication, lifecycle, locking, and so on.
 * The module can create an export monitor SNS notification topic, also existing SNS topics are supported via `notifications_topic_arn` variable.
 * Multi-region support via terraform providers.
-* If triggering from manual snapshots, the snapshot must be named as 'rds-<database-name>-<timestamp>' with timestamp of format eg '2023-08-09-18-07'.
+* If triggering from manual snapshots, the snapshot must be named as `rds-<database-name>-<timestamp>` with timestamp of format eg '2023-08-09-18-07'.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
