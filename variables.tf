@@ -80,6 +80,12 @@ variable "log_level" {
   default     = "INFO"
 }
 
+variable "python_runtime_version" {
+  description = "Runtime Version of Python to use."
+  type        = string
+  default     = "3.8"
+}
+
 variable "tags" {
   description = "(Optional) A mapping of tags to assign to the bucket."
   type        = map(string)

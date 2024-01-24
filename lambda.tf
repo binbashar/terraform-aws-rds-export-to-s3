@@ -8,7 +8,7 @@ module "start_export_task_lambda" {
   function_name = "${local.prefix}rds-export-to-s3${local.postfix}"
   description   = "RDS Export To S3"
   handler       = "index.handler"
-  runtime       = "python3.8"
+  runtime       = "python${var.python_runtime_version}"
   publish       = true
 
   cloudwatch_logs_retention_in_days = 90
@@ -40,7 +40,7 @@ module "monitor_export_task_lambda" {
   function_name = "${local.prefix}rds-export-to-s3-monitor${local.postfix}"
   description   = "RDS Export To S3 Monitor"
   handler       = "index.handler"
-  runtime       = "python3.8"
+  runtime       = "python${var.python_runtime_version}"
   publish       = true
 
   cloudwatch_logs_retention_in_days = 90
