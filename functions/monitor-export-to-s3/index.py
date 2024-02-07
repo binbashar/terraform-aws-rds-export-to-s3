@@ -46,7 +46,7 @@ def handler(event, context):
 
     if eventId in supportedEvents.keys():
         for db in dbName:
-            matchSnapshotRegEx = "^rds:" + db + "-\d{4}-\d{2}-\d{2}-\d{2}-\d{2}$"
+            matchSnapshotRegEx = "^rds(:|-)" + db + "-\d{4}-\d{2}-\d{2}-\d{2}-\d{2}$"
             if re.match(matchSnapshotRegEx, sourceId):
                 messageTitle = supportedEvents[eventId]
                 messageBody = {
